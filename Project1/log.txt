@@ -1,0 +1,32 @@
+student netid: jy0246
+student netid: jy0246
+student netid: jy0246
+
+running 3 tests
+test types::address::test::sp2022autograder001 ... FAILED
+test types::transaction::tests::sp2022autograder003 ... FAILED
+test types::transaction::tests::sp2022autograder002 ... FAILED
+
+failures:
+
+---- types::address::test::sp2022autograder001 stdout ----
+thread 'types::address::test::sp2022autograder001' panicked at src/types/address.rs:51:9:
+not implemented
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- types::transaction::tests::sp2022autograder003 stdout ----
+thread 'types::transaction::tests::sp2022autograder003' panicked at src/types/transaction.rs:25:5:
+not implemented
+
+---- types::transaction::tests::sp2022autograder002 stdout ----
+thread 'types::transaction::tests::sp2022autograder002' panicked at src/types/transaction.rs:25:5:
+not implemented
+
+
+failures:
+    types::address::test::sp2022autograder001
+    types::transaction::tests::sp2022autograder002
+    types::transaction::tests::sp2022autograder003
+
+test result: FAILED. 0 passed; 3 failed; 0 ignored; 0 measured; 8 filtered out; finished in 0.00s
+

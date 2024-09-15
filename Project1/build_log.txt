@@ -1,0 +1,570 @@
+warning: unexpected `cfg` condition name: `test_utilities`
+  --> src/types/block.rs:24:17
+   |
+24 | #[cfg(any(test, test_utilities))]
+   |                 ^^^^^^^^^^^^^^
+   |
+   = help: expected names are: `clippy`, `debug_assertions`, `doc`, `docsrs`, `doctest`, `feature`, `miri`, `overflow_checks`, `panic`, `proc_macro`, `relocation_model`, `rustfmt`, `sanitize`, `sanitizer_cfi_generalize_pointers`, `sanitizer_cfi_normalize_integers`, `target_abi`, `target_arch`, `target_endian`, `target_env`, `target_family`, `target_feature`, `target_has_atomic`, `target_has_atomic_equal_alignment`, `target_has_atomic_load_store`, `target_os`, `target_pointer_width`, `target_thread_local`, `target_vendor`, `test`, `ub_checks`, `unix`, `windows`
+   = help: consider using a Cargo feature instead or adding `println!("cargo::rustc-check-cfg=cfg(test_utilities)");` to the top of the `build.rs`
+   = note: see <https://doc.rust-lang.org/nightly/cargo/reference/build-scripts.html#rustc-check-cfg> for more information about checking conditional configuration
+   = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition name: `test_utilities`
+ --> src/types/hash.rs:3:17
+  |
+3 | #[cfg(any(test, test_utilities))]
+  |                 ^^^^^^^^^^^^^^
+  |
+  = help: consider using a Cargo feature instead or adding `println!("cargo::rustc-check-cfg=cfg(test_utilities)");` to the top of the `build.rs`
+  = note: see <https://doc.rust-lang.org/nightly/cargo/reference/build-scripts.html#rustc-check-cfg> for more information about checking conditional configuration
+
+warning: unexpected `cfg` condition name: `test_utilities`
+   --> src/types/hash.rs:112:17
+    |
+112 | #[cfg(any(test, test_utilities))]
+    |                 ^^^^^^^^^^^^^^
+    |
+    = help: consider using a Cargo feature instead or adding `println!("cargo::rustc-check-cfg=cfg(test_utilities)");` to the top of the `build.rs`
+    = note: see <https://doc.rust-lang.org/nightly/cargo/reference/build-scripts.html#rustc-check-cfg> for more information about checking conditional configuration
+
+warning: unexpected `cfg` condition name: `test_utilities`
+  --> src/types/transaction.rs:33:17
+   |
+33 | #[cfg(any(test, test_utilities))]
+   |                 ^^^^^^^^^^^^^^
+   |
+   = help: consider using a Cargo feature instead or adding `println!("cargo::rustc-check-cfg=cfg(test_utilities)");` to the top of the `build.rs`
+   = note: see <https://doc.rust-lang.org/nightly/cargo/reference/build-scripts.html#rustc-check-cfg> for more information about checking conditional configuration
+
+warning: unused imports: `H256`, `Hashable`, `transaction::SignedTransaction`
+ --> src/types/mempool.rs:2:12
+  |
+2 |     hash::{Hashable, H256},
+  |            ^^^^^^^^  ^^^^
+3 |     transaction::SignedTransaction,
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` on by default
+
+warning: unused import: `std::collections::HashMap`
+ --> src/types/state.rs:1:5
+  |
+1 | use std::collections::HashMap;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unexpected `cfg` condition name: `test_utilities`
+  --> src/miner/mod.rs:54:16
+   |
+54 | #[cfg(any(test,test_utilities))]
+   |                ^^^^^^^^^^^^^^
+   |
+   = help: consider using a Cargo feature instead or adding `println!("cargo::rustc-check-cfg=cfg(test_utilities)");` to the top of the `build.rs`
+   = note: see <https://doc.rust-lang.org/nightly/cargo/reference/build-scripts.html#rustc-check-cfg> for more information about checking conditional configuration
+
+warning: unused imports: `Sender`, `TryRecvError`, `unbounded`
+ --> src/miner/worker.rs:1:26
+  |
+1 | use crossbeam::channel::{unbounded, Receiver, Sender, TryRecvError};
+  |                          ^^^^^^^^^            ^^^^^^  ^^^^^^^^^^^^
+
+warning: unused import: `debug`
+ --> src/miner/worker.rs:2:11
+  |
+2 | use log::{debug, info};
+  |           ^^^^^
+
+warning: unexpected `cfg` condition name: `test_utilities`
+  --> src/network/peer.rs:30:16
+   |
+30 | #[cfg(any(test,test_utilities))]
+   |                ^^^^^^^^^^^^^^
+   |
+   = help: consider using a Cargo feature instead or adding `println!("cargo::rustc-check-cfg=cfg(test_utilities)");` to the top of the `build.rs`
+   = note: see <https://doc.rust-lang.org/nightly/cargo/reference/build-scripts.html#rustc-check-cfg> for more information about checking conditional configuration
+
+warning: unexpected `cfg` condition name: `test_utilities`
+  --> src/network/peer.rs:62:16
+   |
+62 | #[cfg(any(test,test_utilities))]
+   |                ^^^^^^^^^^^^^^
+   |
+   = help: consider using a Cargo feature instead or adding `println!("cargo::rustc-check-cfg=cfg(test_utilities)");` to the top of the `build.rs`
+   = note: see <https://doc.rust-lang.org/nightly/cargo/reference/build-scripts.html#rustc-check-cfg> for more information about checking conditional configuration
+
+warning: unexpected `cfg` condition name: `test_utilities`
+  --> src/network/peer.rs:49:20
+   |
+49 |     #[cfg(any(test,test_utilities))]
+   |                    ^^^^^^^^^^^^^^
+   |
+   = help: consider using a Cargo feature instead or adding `println!("cargo::rustc-check-cfg=cfg(test_utilities)");` to the top of the `build.rs`
+   = note: see <https://doc.rust-lang.org/nightly/cargo/reference/build-scripts.html#rustc-check-cfg> for more information about checking conditional configuration
+
+warning: unexpected `cfg` condition name: `test_utilities`
+   --> src/network/server.rs:235:16
+    |
+235 | #[cfg(any(test,test_utilities))]
+    |                ^^^^^^^^^^^^^^
+    |
+    = help: consider using a Cargo feature instead or adding `println!("cargo::rustc-check-cfg=cfg(test_utilities)");` to the top of the `build.rs`
+    = note: see <https://doc.rust-lang.org/nightly/cargo/reference/build-scripts.html#rustc-check-cfg> for more information about checking conditional configuration
+
+warning: unexpected `cfg` condition name: `test_utilities`
+   --> src/network/server.rs:239:16
+    |
+239 | #[cfg(any(test,test_utilities))]
+    |                ^^^^^^^^^^^^^^
+    |
+    = help: consider using a Cargo feature instead or adding `println!("cargo::rustc-check-cfg=cfg(test_utilities)");` to the top of the `build.rs`
+    = note: see <https://doc.rust-lang.org/nightly/cargo/reference/build-scripts.html#rustc-check-cfg> for more information about checking conditional configuration
+
+warning: unexpected `cfg` condition name: `test_utilities`
+   --> src/network/server.rs:270:20
+    |
+270 |     #[cfg(any(test,test_utilities))]
+    |                    ^^^^^^^^^^^^^^
+    |
+    = help: consider using a Cargo feature instead or adding `println!("cargo::rustc-check-cfg=cfg(test_utilities)");` to the top of the `build.rs`
+    = note: see <https://doc.rust-lang.org/nightly/cargo/reference/build-scripts.html#rustc-check-cfg> for more information about checking conditional configuration
+
+warning: unexpected `cfg` condition name: `test_utilities`
+  --> src/network/worker.rs:10:16
+   |
+10 | #[cfg(any(test,test_utilities))]
+   |                ^^^^^^^^^^^^^^
+   |
+   = help: consider using a Cargo feature instead or adding `println!("cargo::rustc-check-cfg=cfg(test_utilities)");` to the top of the `build.rs`
+   = note: see <https://doc.rust-lang.org/nightly/cargo/reference/build-scripts.html#rustc-check-cfg> for more information about checking conditional configuration
+
+warning: unexpected `cfg` condition name: `test_utilities`
+  --> src/network/worker.rs:12:16
+   |
+12 | #[cfg(any(test,test_utilities))]
+   |                ^^^^^^^^^^^^^^
+   |
+   = help: consider using a Cargo feature instead or adding `println!("cargo::rustc-check-cfg=cfg(test_utilities)");` to the top of the `build.rs`
+   = note: see <https://doc.rust-lang.org/nightly/cargo/reference/build-scripts.html#rustc-check-cfg> for more information about checking conditional configuration
+
+warning: unexpected `cfg` condition name: `test_utilities`
+  --> src/network/worker.rs:70:16
+   |
+70 | #[cfg(any(test,test_utilities))]
+   |                ^^^^^^^^^^^^^^
+   |
+   = help: consider using a Cargo feature instead or adding `println!("cargo::rustc-check-cfg=cfg(test_utilities)");` to the top of the `build.rs`
+   = note: see <https://doc.rust-lang.org/nightly/cargo/reference/build-scripts.html#rustc-check-cfg> for more information about checking conditional configuration
+
+warning: unexpected `cfg` condition name: `test_utilities`
+  --> src/network/worker.rs:74:16
+   |
+74 | #[cfg(any(test,test_utilities))]
+   |                ^^^^^^^^^^^^^^
+   |
+   = help: consider using a Cargo feature instead or adding `println!("cargo::rustc-check-cfg=cfg(test_utilities)");` to the top of the `build.rs`
+   = note: see <https://doc.rust-lang.org/nightly/cargo/reference/build-scripts.html#rustc-check-cfg> for more information about checking conditional configuration
+
+warning: unexpected `cfg` condition name: `test_utilities`
+  --> src/network/worker.rs:88:16
+   |
+88 | #[cfg(any(test,test_utilities))]
+   |                ^^^^^^^^^^^^^^
+   |
+   = help: consider using a Cargo feature instead or adding `println!("cargo::rustc-check-cfg=cfg(test_utilities)");` to the top of the `build.rs`
+   = note: see <https://doc.rust-lang.org/nightly/cargo/reference/build-scripts.html#rustc-check-cfg> for more information about checking conditional configuration
+
+warning: unreachable expression
+  --> src/generator/generator.rs:29:13
+   |
+27 |               unimplemented!();
+   |               ---------------- any code following this expression is unreachable
+28 |
+29 | /             if theta != 0 {
+30 | |                 let interval = time::Duration::from_millis(10 * theta);
+31 | |                 thread::sleep(interval);
+32 | |             }
+   | |_____________^ unreachable expression
+   |
+   = note: `#[warn(unreachable_code)]` on by default
+
+warning: unused variable: `block`
+  --> src/blockchain/mod.rs:14:30
+   |
+14 |     pub fn insert(&mut self, block: &Block) {
+   |                              ^^^^^ help: if this is intentional, prefix it with an underscore: `_block`
+   |
+   = note: `#[warn(unused_variables)]` on by default
+
+warning: unused variable: `parent`
+  --> src/types/block.rs:25:30
+   |
+25 | pub fn generate_random_block(parent: &H256) -> Block {
+   |                              ^^^^^^ help: if this is intentional, prefix it with an underscore: `_parent`
+
+warning: unused variable: `data`
+ --> src/types/merkle.rs:9:19
+  |
+9 |     pub fn new<T>(data: &[T]) -> Self where T: Hashable, {
+  |                   ^^^^ help: if this is intentional, prefix it with an underscore: `_data`
+
+warning: unused variable: `index`
+  --> src/types/merkle.rs:18:25
+   |
+18 |     pub fn proof(&self, index: usize) -> Vec<H256> {
+   |                         ^^^^^ help: if this is intentional, prefix it with an underscore: `_index`
+
+warning: unused variable: `root`
+  --> src/types/merkle.rs:25:15
+   |
+25 | pub fn verify(root: &H256, datum: &H256, proof: &[H256], index: usize, leaf_size: usize) -> bool {
+   |               ^^^^ help: if this is intentional, prefix it with an underscore: `_root`
+
+warning: unused variable: `datum`
+  --> src/types/merkle.rs:25:28
+   |
+25 | pub fn verify(root: &H256, datum: &H256, proof: &[H256], index: usize, leaf_size: usize) -> bool {
+   |                            ^^^^^ help: if this is intentional, prefix it with an underscore: `_datum`
+
+warning: unused variable: `proof`
+  --> src/types/merkle.rs:25:42
+   |
+25 | pub fn verify(root: &H256, datum: &H256, proof: &[H256], index: usize, leaf_size: usize) -> bool {
+   |                                          ^^^^^ help: if this is intentional, prefix it with an underscore: `_proof`
+
+warning: unused variable: `index`
+  --> src/types/merkle.rs:25:58
+   |
+25 | pub fn verify(root: &H256, datum: &H256, proof: &[H256], index: usize, leaf_size: usize) -> bool {
+   |                                                          ^^^^^ help: if this is intentional, prefix it with an underscore: `_index`
+
+warning: unused variable: `leaf_size`
+  --> src/types/merkle.rs:25:72
+   |
+25 | pub fn verify(root: &H256, datum: &H256, proof: &[H256], index: usize, leaf_size: usize) -> bool {
+   |                                                                        ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_leaf_size`
+
+warning: unused variable: `theta`
+  --> src/generator/generator.rs:25:37
+   |
+25 |     fn generate_transactions(&self, theta: u64) {
+   |                                     ^^^^^ help: if this is intentional, prefix it with an underscore: `_theta`
+
+warning: field `finished_block_chan` is never read
+  --> src/miner/mod.rs:28:5
+   |
+24 | pub struct Context {
+   |            ------- field in this struct
+...
+28 |     finished_block_chan: Sender<Block>,
+   |     ^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` on by default
+
+warning: field `server` is never read
+ --> src/miner/worker.rs:9:5
+  |
+8 | pub struct Worker {
+  |            ------ field in this struct
+9 |     server: ServerHandle,
+  |     ^^^^^^
+  |
+  = note: `Worker` has a derived impl for the trait `Clone`, but this is intentionally ignored during dead code analysis
+
+warning: field `server` is never read
+  --> src/network/worker.rs:18:5
+   |
+15 | pub struct Worker {
+   |            ------ field in this struct
+...
+18 |     server: ServerHandle,
+   |     ^^^^^^
+   |
+   = note: `Worker` has a derived impl for the trait `Clone`, but this is intentionally ignored during dead code analysis
+
+warning: `bitcoin` (bin "bitcoin" test) generated 34 warnings (run `cargo fix --bin "bitcoin" --tests` to apply 4 suggestions)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.08s
+     Running unittests src/main.rs (/Users/yao/blockchain/COS-ECE470-fa2024/target/debug/deps/bitcoin-2dc7751261eeb611)
+warning: unexpected `cfg` condition name: `test_utilities`
+  --> src/types/block.rs:24:17
+   |
+24 | #[cfg(any(test, test_utilities))]
+   |                 ^^^^^^^^^^^^^^
+   |
+   = help: expected names are: `clippy`, `debug_assertions`, `doc`, `docsrs`, `doctest`, `feature`, `miri`, `overflow_checks`, `panic`, `proc_macro`, `relocation_model`, `rustfmt`, `sanitize`, `sanitizer_cfi_generalize_pointers`, `sanitizer_cfi_normalize_integers`, `target_abi`, `target_arch`, `target_endian`, `target_env`, `target_family`, `target_feature`, `target_has_atomic`, `target_has_atomic_equal_alignment`, `target_has_atomic_load_store`, `target_os`, `target_pointer_width`, `target_thread_local`, `target_vendor`, `test`, `ub_checks`, `unix`, `windows`
+   = help: consider using a Cargo feature instead or adding `println!("cargo::rustc-check-cfg=cfg(test_utilities)");` to the top of the `build.rs`
+   = note: see <https://doc.rust-lang.org/nightly/cargo/reference/build-scripts.html#rustc-check-cfg> for more information about checking conditional configuration
+   = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition name: `test_utilities`
+ --> src/types/hash.rs:3:17
+  |
+3 | #[cfg(any(test, test_utilities))]
+  |                 ^^^^^^^^^^^^^^
+  |
+  = help: consider using a Cargo feature instead or adding `println!("cargo::rustc-check-cfg=cfg(test_utilities)");` to the top of the `build.rs`
+  = note: see <https://doc.rust-lang.org/nightly/cargo/reference/build-scripts.html#rustc-check-cfg> for more information about checking conditional configuration
+
+warning: unexpected `cfg` condition name: `test_utilities`
+   --> src/types/hash.rs:112:17
+    |
+112 | #[cfg(any(test, test_utilities))]
+    |                 ^^^^^^^^^^^^^^
+    |
+    = help: consider using a Cargo feature instead or adding `println!("cargo::rustc-check-cfg=cfg(test_utilities)");` to the top of the `build.rs`
+    = note: see <https://doc.rust-lang.org/nightly/cargo/reference/build-scripts.html#rustc-check-cfg> for more information about checking conditional configuration
+
+warning: unexpected `cfg` condition name: `test_utilities`
+  --> src/types/transaction.rs:33:17
+   |
+33 | #[cfg(any(test, test_utilities))]
+   |                 ^^^^^^^^^^^^^^
+   |
+   = help: consider using a Cargo feature instead or adding `println!("cargo::rustc-check-cfg=cfg(test_utilities)");` to the top of the `build.rs`
+   = note: see <https://doc.rust-lang.org/nightly/cargo/reference/build-scripts.html#rustc-check-cfg> for more information about checking conditional configuration
+
+warning: unused imports: `H256`, `Hashable`, `transaction::SignedTransaction`
+ --> src/types/mempool.rs:2:12
+  |
+2 |     hash::{Hashable, H256},
+  |            ^^^^^^^^  ^^^^
+3 |     transaction::SignedTransaction,
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` on by default
+
+warning: unused import: `std::collections::HashMap`
+ --> src/types/state.rs:1:5
+  |
+1 | use std::collections::HashMap;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unexpected `cfg` condition name: `test_utilities`
+  --> src/miner/mod.rs:54:16
+   |
+54 | #[cfg(any(test,test_utilities))]
+   |                ^^^^^^^^^^^^^^
+   |
+   = help: consider using a Cargo feature instead or adding `println!("cargo::rustc-check-cfg=cfg(test_utilities)");` to the top of the `build.rs`
+   = note: see <https://doc.rust-lang.org/nightly/cargo/reference/build-scripts.html#rustc-check-cfg> for more information about checking conditional configuration
+
+warning: unused imports: `Sender`, `TryRecvError`, `unbounded`
+ --> src/miner/worker.rs:1:26
+  |
+1 | use crossbeam::channel::{unbounded, Receiver, Sender, TryRecvError};
+  |                          ^^^^^^^^^            ^^^^^^  ^^^^^^^^^^^^
+
+warning: unused import: `debug`
+ --> src/miner/worker.rs:2:11
+  |
+2 | use log::{debug, info};
+  |           ^^^^^
+
+warning: unexpected `cfg` condition name: `test_utilities`
+  --> src/network/peer.rs:30:16
+   |
+30 | #[cfg(any(test,test_utilities))]
+   |                ^^^^^^^^^^^^^^
+   |
+   = help: consider using a Cargo feature instead or adding `println!("cargo::rustc-check-cfg=cfg(test_utilities)");` to the top of the `build.rs`
+   = note: see <https://doc.rust-lang.org/nightly/cargo/reference/build-scripts.html#rustc-check-cfg> for more information about checking conditional configuration
+
+warning: unexpected `cfg` condition name: `test_utilities`
+  --> src/network/peer.rs:62:16
+   |
+62 | #[cfg(any(test,test_utilities))]
+   |                ^^^^^^^^^^^^^^
+   |
+   = help: consider using a Cargo feature instead or adding `println!("cargo::rustc-check-cfg=cfg(test_utilities)");` to the top of the `build.rs`
+   = note: see <https://doc.rust-lang.org/nightly/cargo/reference/build-scripts.html#rustc-check-cfg> for more information about checking conditional configuration
+
+warning: unexpected `cfg` condition name: `test_utilities`
+  --> src/network/peer.rs:49:20
+   |
+49 |     #[cfg(any(test,test_utilities))]
+   |                    ^^^^^^^^^^^^^^
+   |
+   = help: consider using a Cargo feature instead or adding `println!("cargo::rustc-check-cfg=cfg(test_utilities)");` to the top of the `build.rs`
+   = note: see <https://doc.rust-lang.org/nightly/cargo/reference/build-scripts.html#rustc-check-cfg> for more information about checking conditional configuration
+
+warning: unexpected `cfg` condition name: `test_utilities`
+   --> src/network/server.rs:235:16
+    |
+235 | #[cfg(any(test,test_utilities))]
+    |                ^^^^^^^^^^^^^^
+    |
+    = help: consider using a Cargo feature instead or adding `println!("cargo::rustc-check-cfg=cfg(test_utilities)");` to the top of the `build.rs`
+    = note: see <https://doc.rust-lang.org/nightly/cargo/reference/build-scripts.html#rustc-check-cfg> for more information about checking conditional configuration
+
+warning: unexpected `cfg` condition name: `test_utilities`
+   --> src/network/server.rs:239:16
+    |
+239 | #[cfg(any(test,test_utilities))]
+    |                ^^^^^^^^^^^^^^
+    |
+    = help: consider using a Cargo feature instead or adding `println!("cargo::rustc-check-cfg=cfg(test_utilities)");` to the top of the `build.rs`
+    = note: see <https://doc.rust-lang.org/nightly/cargo/reference/build-scripts.html#rustc-check-cfg> for more information about checking conditional configuration
+
+warning: unexpected `cfg` condition name: `test_utilities`
+   --> src/network/server.rs:270:20
+    |
+270 |     #[cfg(any(test,test_utilities))]
+    |                    ^^^^^^^^^^^^^^
+    |
+    = help: consider using a Cargo feature instead or adding `println!("cargo::rustc-check-cfg=cfg(test_utilities)");` to the top of the `build.rs`
+    = note: see <https://doc.rust-lang.org/nightly/cargo/reference/build-scripts.html#rustc-check-cfg> for more information about checking conditional configuration
+
+warning: unexpected `cfg` condition name: `test_utilities`
+  --> src/network/worker.rs:10:16
+   |
+10 | #[cfg(any(test,test_utilities))]
+   |                ^^^^^^^^^^^^^^
+   |
+   = help: consider using a Cargo feature instead or adding `println!("cargo::rustc-check-cfg=cfg(test_utilities)");` to the top of the `build.rs`
+   = note: see <https://doc.rust-lang.org/nightly/cargo/reference/build-scripts.html#rustc-check-cfg> for more information about checking conditional configuration
+
+warning: unexpected `cfg` condition name: `test_utilities`
+  --> src/network/worker.rs:12:16
+   |
+12 | #[cfg(any(test,test_utilities))]
+   |                ^^^^^^^^^^^^^^
+   |
+   = help: consider using a Cargo feature instead or adding `println!("cargo::rustc-check-cfg=cfg(test_utilities)");` to the top of the `build.rs`
+   = note: see <https://doc.rust-lang.org/nightly/cargo/reference/build-scripts.html#rustc-check-cfg> for more information about checking conditional configuration
+
+warning: unexpected `cfg` condition name: `test_utilities`
+  --> src/network/worker.rs:70:16
+   |
+70 | #[cfg(any(test,test_utilities))]
+   |                ^^^^^^^^^^^^^^
+   |
+   = help: consider using a Cargo feature instead or adding `println!("cargo::rustc-check-cfg=cfg(test_utilities)");` to the top of the `build.rs`
+   = note: see <https://doc.rust-lang.org/nightly/cargo/reference/build-scripts.html#rustc-check-cfg> for more information about checking conditional configuration
+
+warning: unexpected `cfg` condition name: `test_utilities`
+  --> src/network/worker.rs:74:16
+   |
+74 | #[cfg(any(test,test_utilities))]
+   |                ^^^^^^^^^^^^^^
+   |
+   = help: consider using a Cargo feature instead or adding `println!("cargo::rustc-check-cfg=cfg(test_utilities)");` to the top of the `build.rs`
+   = note: see <https://doc.rust-lang.org/nightly/cargo/reference/build-scripts.html#rustc-check-cfg> for more information about checking conditional configuration
+
+warning: unexpected `cfg` condition name: `test_utilities`
+  --> src/network/worker.rs:88:16
+   |
+88 | #[cfg(any(test,test_utilities))]
+   |                ^^^^^^^^^^^^^^
+   |
+   = help: consider using a Cargo feature instead or adding `println!("cargo::rustc-check-cfg=cfg(test_utilities)");` to the top of the `build.rs`
+   = note: see <https://doc.rust-lang.org/nightly/cargo/reference/build-scripts.html#rustc-check-cfg> for more information about checking conditional configuration
+
+warning: unreachable expression
+  --> src/generator/generator.rs:29:13
+   |
+27 |               unimplemented!();
+   |               ---------------- any code following this expression is unreachable
+28 |
+29 | /             if theta != 0 {
+30 | |                 let interval = time::Duration::from_millis(10 * theta);
+31 | |                 thread::sleep(interval);
+32 | |             }
+   | |_____________^ unreachable expression
+   |
+   = note: `#[warn(unreachable_code)]` on by default
+
+warning: unused variable: `block`
+  --> src/blockchain/mod.rs:14:30
+   |
+14 |     pub fn insert(&mut self, block: &Block) {
+   |                              ^^^^^ help: if this is intentional, prefix it with an underscore: `_block`
+   |
+   = note: `#[warn(unused_variables)]` on by default
+
+warning: unused variable: `parent`
+  --> src/types/block.rs:25:30
+   |
+25 | pub fn generate_random_block(parent: &H256) -> Block {
+   |                              ^^^^^^ help: if this is intentional, prefix it with an underscore: `_parent`
+
+warning: unused variable: `data`
+ --> src/types/merkle.rs:9:19
+  |
+9 |     pub fn new<T>(data: &[T]) -> Self where T: Hashable, {
+  |                   ^^^^ help: if this is intentional, prefix it with an underscore: `_data`
+
+warning: unused variable: `index`
+  --> src/types/merkle.rs:18:25
+   |
+18 |     pub fn proof(&self, index: usize) -> Vec<H256> {
+   |                         ^^^^^ help: if this is intentional, prefix it with an underscore: `_index`
+
+warning: unused variable: `root`
+  --> src/types/merkle.rs:25:15
+   |
+25 | pub fn verify(root: &H256, datum: &H256, proof: &[H256], index: usize, leaf_size: usize) -> bool {
+   |               ^^^^ help: if this is intentional, prefix it with an underscore: `_root`
+
+warning: unused variable: `datum`
+  --> src/types/merkle.rs:25:28
+   |
+25 | pub fn verify(root: &H256, datum: &H256, proof: &[H256], index: usize, leaf_size: usize) -> bool {
+   |                            ^^^^^ help: if this is intentional, prefix it with an underscore: `_datum`
+
+warning: unused variable: `proof`
+  --> src/types/merkle.rs:25:42
+   |
+25 | pub fn verify(root: &H256, datum: &H256, proof: &[H256], index: usize, leaf_size: usize) -> bool {
+   |                                          ^^^^^ help: if this is intentional, prefix it with an underscore: `_proof`
+
+warning: unused variable: `index`
+  --> src/types/merkle.rs:25:58
+   |
+25 | pub fn verify(root: &H256, datum: &H256, proof: &[H256], index: usize, leaf_size: usize) -> bool {
+   |                                                          ^^^^^ help: if this is intentional, prefix it with an underscore: `_index`
+
+warning: unused variable: `leaf_size`
+  --> src/types/merkle.rs:25:72
+   |
+25 | pub fn verify(root: &H256, datum: &H256, proof: &[H256], index: usize, leaf_size: usize) -> bool {
+   |                                                                        ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_leaf_size`
+
+warning: unused variable: `theta`
+  --> src/generator/generator.rs:25:37
+   |
+25 |     fn generate_transactions(&self, theta: u64) {
+   |                                     ^^^^^ help: if this is intentional, prefix it with an underscore: `_theta`
+
+warning: field `finished_block_chan` is never read
+  --> src/miner/mod.rs:28:5
+   |
+24 | pub struct Context {
+   |            ------- field in this struct
+...
+28 |     finished_block_chan: Sender<Block>,
+   |     ^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` on by default
+
+warning: field `server` is never read
+ --> src/miner/worker.rs:9:5
+  |
+8 | pub struct Worker {
+  |            ------ field in this struct
+9 |     server: ServerHandle,
+  |     ^^^^^^
+  |
+  = note: `Worker` has a derived impl for the trait `Clone`, but this is intentionally ignored during dead code analysis
+
+warning: field `server` is never read
+  --> src/network/worker.rs:18:5
+   |
+15 | pub struct Worker {
+   |            ------ field in this struct
+...
+18 |     server: ServerHandle,
+   |     ^^^^^^
+   |
+   = note: `Worker` has a derived impl for the trait `Clone`, but this is intentionally ignored during dead code analysis
+
+warning: `bitcoin` (bin "bitcoin" test) generated 34 warnings (run `cargo fix --bin "bitcoin" --tests` to apply 4 suggestions)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.22s
+     Running unittests src/main.rs (/Users/yao/blockchain/COS-ECE470-fa2024/target/debug/deps/bitcoin-2dc7751261eeb611)
