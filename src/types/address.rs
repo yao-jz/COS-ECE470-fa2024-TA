@@ -2,7 +2,7 @@ use serde::{Serialize, Deserialize};
 use ring::digest::{digest, SHA256};
 
 // 20-byte address
-#[derive(Eq, PartialEq, Serialize, Deserialize, Clone, Hash, Default, Copy)]
+#[derive(Eq, PartialEq, Serialize, Deserialize, Clone, Hash, Default, Copy, Ord, PartialOrd)]
 pub struct Address([u8; 20]);
 
 impl std::convert::From<&[u8; 20]> for Address {

@@ -1,13 +1,17 @@
 use serde::{Serialize,Deserialize};
-use ring::signature::{Ed25519KeyPair, Signature};
-use rand::Rng;
+use crate::types::hash::{H256, Hashable};
+use ring::signature::{Ed25519KeyPair, KeyPair, Signature};
+use rand::{thread_rng, Rng};
 use crate::types::address::Address;
+
+use super::key_pair;
 
 #[derive(Serialize, Deserialize, Debug, Default, Clone)]
 pub struct Transaction {
     pub sender: Address,
     pub receiver: Address,
     pub value: i64,
+    pub nonce: u32,
 }
 
 #[derive(Serialize, Deserialize, Debug, Default, Clone)]
@@ -15,6 +19,13 @@ pub struct SignedTransaction {
     pub transaction: Transaction,
     pub signature: Vec<u8>,
     pub public_key: Vec<u8>,
+}
+
+impl Hashable for SignedTransaction {
+    fn hash(&self) -> H256 {
+        let data = bincode::serialize(self).unwrap();
+        ring::digest::digest(&ring::digest::SHA256, &data).into()
+    }
 }
 
 /// Create digital signature of a transaction
@@ -37,6 +48,30 @@ pub fn generate_random_transaction() -> Transaction {
         sender: Address::from(rng.gen::<[u8; 20]>()),
         receiver: Address::from(rng.gen::<[u8; 20]>()),
         value: rng.gen(),
+        nonce: rng.gen(),
+    }
+}
+
+// #[cfg(any(test, test_utilities))]
+pub fn generate_random_signed_transaction() -> SignedTransaction {
+    let mut rng = thread_rng();
+
+    let keys = key_pair::random();
+    let public_key: Vec<u8> = keys.public_key().as_ref().to_vec();
+
+    let transaction = Transaction {
+        sender: Address::from_public_key_bytes(&public_key),
+        receiver: Address::from(rng.gen::<[u8; 20]>()),
+        value: rng.gen::<i64>(),
+        nonce: rng.gen::<u32>(),
+    };
+
+    let signature: Vec<u8> = sign(&transaction, &keys).as_ref().to_vec();
+
+    SignedTransaction {
+        transaction,
+        signature,
+        public_key,
     }
 }
 
