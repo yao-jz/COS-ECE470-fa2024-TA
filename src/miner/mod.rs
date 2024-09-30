@@ -6,8 +6,12 @@ use crossbeam::channel::{unbounded, Receiver, Sender, TryRecvError};
 use std::time;
 
 use std::thread;
-
-use crate::types::block::Block;
+use crate::blockchain::{Blockchain};
+use std::sync::{Arc, Mutex};
+use crate::types::block::{Block,generate_block};
+use crate::types::hash::H256;
+use crate::types::hash::Hashable;
+use crate::types::transaction::SignedTransaction;
 
 enum ControlSignal {
     Start(u64), // the number controls the lambda of interval between block generation
@@ -26,6 +30,7 @@ pub struct Context {
     control_chan: Receiver<ControlSignal>,
     operating_state: OperatingState,
     finished_block_chan: Sender<Block>,
+    blockchain: Arc<Mutex<Blockchain>>,
 }
 
 #[derive(Clone)]
@@ -34,7 +39,7 @@ pub struct Handle {
     control_chan: Sender<ControlSignal>,
 }
 
-pub fn new() -> (Context, Handle, Receiver<Block>) {
+pub fn new(blockchain: &Arc<Mutex<Blockchain>>) -> (Context, Handle, Receiver<Block>) {
     let (signal_chan_sender, signal_chan_receiver) = unbounded();
     let (finished_block_sender, finished_block_receiver) = unbounded();
 
@@ -42,6 +47,7 @@ pub fn new() -> (Context, Handle, Receiver<Block>) {
         control_chan: signal_chan_receiver,
         operating_state: OperatingState::Paused,
         finished_block_chan: finished_block_sender,
+        blockchain: Arc::clone(blockchain),
     };
 
     let handle = Handle {
@@ -53,7 +59,8 @@ pub fn new() -> (Context, Handle, Receiver<Block>) {
 
 #[cfg(any(test,test_utilities))]
 fn test_new() -> (Context, Handle, Receiver<Block>) {
-    new()
+    let blockchain = Arc::new(Mutex::new(Blockchain::new()));
+    new(&blockchain)
 }
 
 impl Handle {
@@ -86,6 +93,10 @@ impl Context {
     fn miner_loop(&mut self) {
         // main mining loop
         loop {
+            let mut count = 0;
+            let mut txs: Vec<SignedTransaction> = Vec::new();
+            // get transactions from mempool
+
             // check and react to control signals
             match self.operating_state {
                 OperatingState::Paused => {
@@ -134,6 +145,18 @@ impl Context {
 
             // TODO for student: actual mining, create a block
             // TODO for student: if block mining finished, you can have something like: self.finished_block_chan.send(block.clone()).expect("Send finished block error");
+            let difficulty = self.blockchain.lock().unwrap().get_difficulty();
+            let parent = self.blockchain.lock().unwrap().tip();
+            let block = generate_block(&parent, &difficulty, txs);
+
+            if block.hash() <= difficulty {
+                self.finished_block_chan.send(block.clone()).expect("Send finished block error");
+
+                // BUG! is it needed to insert here? already inserted in worker.rs
+                self.blockchain.lock().unwrap().insert(&block);
+                print!("from miner: block inserted");
+            }
+
 
             if let OperatingState::Run(i) = self.operating_state {
                 if i != 0 {

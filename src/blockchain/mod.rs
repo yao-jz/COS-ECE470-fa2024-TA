@@ -1,4 +1,5 @@
 use crate::types::block::{Block, BlockHeader};
+use crate::types::merkle::MerkleTree;
 use crate::types::state::State;
 use crate::types::hash::Hashable;
 use std::collections::HashMap;
@@ -18,28 +19,46 @@ pub struct Blockchain {
 impl Blockchain {
     /// Create a new blockchain, only containing the genesis block
     pub fn new() -> Self {
-        let genesis = H256::from([0; 32]);
-        let blocks: HashMap<H256, Block> = HashMap::new();
+        let mut blocks: HashMap<H256, Block> = HashMap::new();
+        let parent: H256 = H256::from([0; 32]);
+        let nonce: u32 = 0;
+        let mut easy: [u8; 32] = [0; 32];
+        easy[0] = 0xFF;
+        let difficulty = H256::from(easy);
+        let empty: Vec<H256> = Vec::new();
+        let merkle_root = MerkleTree::new(&empty).root();
+        let header = BlockHeader {
+            parent,
+            nonce,
+            difficulty,
+            timestamp: 0,
+            merkle_root,
+        };
+        let genesis = Block {
+            header,
+            data: Vec::new(),
+        };
+        let genesis_hash = genesis.hash();
+        println!("genesis hash: {:?}", genesis.hash());
+        blocks.insert(genesis_hash, genesis);
         let mut heights: HashMap<H256, u32> = HashMap::new();
+        heights.insert(genesis_hash, 0);
         let mut states: HashMap<H256, State> = HashMap::new();
         let transactions: HashMap<H256, SignedTransaction> = HashMap::new();
-
-        heights.insert(genesis.clone(), 0);
         let state = State::ico();
-        states.insert(genesis.clone(), state);
+        states.insert(genesis_hash, state);
         Self {
             blocks,
             heights,
             transactions,
             states,
-            tip: genesis,
+            tip: genesis_hash,
         }
     }
 
     /// Insert a block into blockchain
     pub fn insert(&mut self, block: &Block) {
         let parent = block.get_parent();
-        let parent_state = self.states.get(&parent).unwrap();
 
         let block_hash = block.hash();
         self.blocks.insert(block_hash, block.clone());
@@ -56,6 +75,12 @@ impl Blockchain {
     /// Get the last block's hash of the longest chain
     pub fn tip(&self) -> H256 {
         self.tip.clone()
+    }
+
+    // Get the difficulty
+    pub fn get_difficulty(&self) -> H256 {
+        let block = self.blocks.get(&self.tip).unwrap();
+        block.header.difficulty.clone()
     }
 
     /// Get all blocks' hashes of the longest chain, ordered from genesis to the tip
