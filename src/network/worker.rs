@@ -1,7 +1,11 @@
 use super::message::Message;
 use super::peer;
 use super::server::Handle as ServerHandle;
-use crate::types::hash::H256;
+use crate::types::hash::{Hashable, H256};
+use crate::blockchain::Blockchain;
+use std::sync::{Arc, Mutex};
+use crate::types::block::Block;
+
 
 use log::{debug, warn, error};
 
@@ -16,6 +20,7 @@ pub struct Worker {
     msg_chan: smol::channel::Receiver<(Vec<u8>, peer::Handle)>,
     num_worker: usize,
     server: ServerHandle,
+    blockchain: Arc<Mutex<Blockchain>>,
 }
 
 
@@ -24,11 +29,13 @@ impl Worker {
         num_worker: usize,
         msg_src: smol::channel::Receiver<(Vec<u8>, peer::Handle)>,
         server: &ServerHandle,
+        blockchain: &Arc<Mutex<Blockchain>>,
     ) -> Self {
         Self {
             msg_chan: msg_src,
             num_worker,
             server: server.clone(),
+            blockchain: Arc::clone(blockchain),
         }
     }
 
@@ -61,6 +68,38 @@ impl Worker {
                 Message::Pong(nonce) => {
                     debug!("Pong: {}", nonce);
                 }
+                Message::NewBlockHashes(hashes) => {
+                    debug!("NewBlockHashes: {:?}", hashes);
+                    if hashes.len() > 0 {
+                        peer.write(Message::GetBlocks(hashes));
+                    }
+                }
+                Message::GetBlocks(hashes) => {
+                    debug!("GetBlocks: {:?}", hashes);
+                    let mut needed_blocks = vec![];
+                    for hash in hashes {
+                        let blockchain = self.blockchain.lock().unwrap();
+                        let block = blockchain.blocks.get(&hash).cloned();
+                        if let Some(block) = block {
+                            needed_blocks.push(block);
+                        }
+                    }
+                    if needed_blocks.len() > 0 {
+                        peer.write(Message::Blocks(needed_blocks));
+                    }
+                }
+                Message::Blocks(blocks) => {
+                    debug!("Blocks: {:?}", blocks);
+                    let mut new_blocks = vec![];
+                    for block in blocks {
+                        let mut blockchain = self.blockchain.lock().unwrap();
+                        blockchain.insert(&block);
+                        new_blocks.push(block.hash());
+                    }
+                    if new_blocks.len() > 0 {
+                        self.server.broadcast(Message::NewBlockHashes(new_blocks));
+                    }
+                }
                 _ => unimplemented!(),
             }
         }
@@ -90,9 +129,11 @@ impl TestMsgSender {
 fn generate_test_worker_and_start() -> (TestMsgSender, ServerTestReceiver, Vec<H256>) {
     let (server, server_receiver) = ServerHandle::new_for_test();
     let (test_msg_sender, msg_chan) = TestMsgSender::new();
-    let worker = Worker::new(1, msg_chan, &server);
+    let blockchain = Arc::new(Mutex::new(Blockchain::new()));
+    let all_blocks = blockchain.lock().unwrap().all_blocks_in_longest_chain();
+    let worker = Worker::new(1, msg_chan, &server, &blockchain);
     worker.start(); 
-    (test_msg_sender, server_receiver, vec![])
+    (test_msg_sender, server_receiver, all_blocks)
 }
 
 // DO NOT CHANGE THIS COMMENT, IT IS FOR AUTOGRADER. BEFORE TEST

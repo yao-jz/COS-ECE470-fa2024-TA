@@ -152,9 +152,9 @@ impl Context {
             if block.hash() <= difficulty {
                 self.finished_block_chan.send(block.clone()).expect("Send finished block error");
 
-                // BUG! is it needed to insert here? already inserted in worker.rs
                 self.blockchain.lock().unwrap().insert(&block);
-                print!("from miner: block inserted");
+                println!("from miner: block inserted");
+                
             }
 
 

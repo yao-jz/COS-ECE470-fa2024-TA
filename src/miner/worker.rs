@@ -35,7 +35,7 @@ impl Worker {
                 self.worker_loop();
             })
             .unwrap();
-        info!("Miner initialized into paused mode");
+        info!("Miner's worker initialized into paused mode");
     }
 
     fn worker_loop(&self) {
@@ -49,8 +49,10 @@ impl Worker {
             }
             let mut new_blocks: Vec<H256> = Vec::new();
             new_blocks.push(finished_block.hash());
-            {println!("from miner/worker: insert new_blocks: {:?}", self.blockchain.lock().unwrap().tip());}
-            self.server.broadcast(Message::NewBlockHashes(new_blocks));
+            {println!("from miner's worker: insert new_blocks: {:?}", self.blockchain.lock().unwrap().tip());}
+            if new_blocks.len() > 0 {
+                self.server.broadcast(Message::NewBlockHashes(new_blocks));
+            }
         }
     }
 }
