@@ -5,6 +5,7 @@ use crate::types::hash::{Hashable, H256};
 use crate::blockchain::Blockchain;
 use std::sync::{Arc, Mutex};
 use crate::types::block::Block;
+use std::collections::HashMap;
 
 
 use log::{debug, warn, error};
@@ -52,6 +53,7 @@ impl Worker {
 
     fn worker_loop(&self) {
         loop {
+            let mut block_buffer: HashMap<H256, Block> = HashMap::new();
             let result = smol::block_on(self.msg_chan.recv());
             if let Err(e) = result {
                 error!("network worker terminated {}", e);
@@ -91,13 +93,32 @@ impl Worker {
                 Message::Blocks(blocks) => {
                     debug!("Blocks: {:?}", blocks);
                     let mut new_blocks = vec![];
+                    let mut needed_parent_blocks = vec![];
                     for block in blocks {
                         let mut blockchain = self.blockchain.lock().unwrap();
-                        blockchain.insert(&block);
-                        new_blocks.push(block.hash());
+                        let existing_block = blockchain.blocks.get(&block.hash()).cloned();
+                        if let Some(existing_block) = existing_block {
+                            continue;
+                        } else {
+                            let parent = blockchain.blocks.get(&block.header.parent).cloned();
+                            if let Some(parent) = parent {
+                            } else {
+                                needed_parent_blocks.push(block.header.parent.clone());
+                                block_buffer.insert(block.header.parent.clone(), block.clone());
+                            }
+                            blockchain.insert(&block);
+                            new_blocks.push(block.hash());
+                            if let Some(b) = block_buffer.remove(&block.hash()) {
+                                blockchain.insert(&b);
+                                new_blocks.push(b.hash());
+                            }
+                        }
                     }
                     if new_blocks.len() > 0 {
                         self.server.broadcast(Message::NewBlockHashes(new_blocks));
+                    }
+                    if needed_parent_blocks.len() > 0 {
+                        peer.write(Message::GetBlocks(needed_parent_blocks));
                     }
                 }
                 _ => unimplemented!(),
