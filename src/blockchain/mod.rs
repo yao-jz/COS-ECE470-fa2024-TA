@@ -23,7 +23,7 @@ impl Blockchain {
         let parent: H256 = H256::from([0; 32]);
         let nonce: u32 = 0;
         let mut easy: [u8; 32] = [0; 32];
-        easy[0] = 0xFF;
+        easy[0] = 0x1f;
         let difficulty = H256::from(easy);
         let empty: Vec<H256> = Vec::new();
         let merkle_root = MerkleTree::new(&empty).root();

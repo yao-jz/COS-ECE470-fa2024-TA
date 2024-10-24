@@ -53,7 +53,7 @@ impl Worker {
 
     fn worker_loop(&self) {
         loop {
-            let mut block_buffer: HashMap<H256, Block> = HashMap::new();
+            let mut block_buffer: HashMap<H256, Vec<Block>> = HashMap::new();
             let result = smol::block_on(self.msg_chan.recv());
             if let Err(e) = result {
                 error!("network worker terminated {}", e);
@@ -95,6 +95,11 @@ impl Worker {
                     let mut new_blocks = vec![];
                     let mut needed_parent_blocks = vec![];
                     for block in blocks {
+                        // check the difficulty
+                        let difficulty = block.header.difficulty;
+                        if block.hash() > difficulty {
+                            continue; // ignore the block
+                        }
                         let mut blockchain = self.blockchain.lock().unwrap();
                         let existing_block = blockchain.blocks.get(&block.hash()).cloned();
                         if let Some(existing_block) = existing_block {
@@ -102,16 +107,35 @@ impl Worker {
                         } else {
                             let parent = blockchain.blocks.get(&block.header.parent).cloned();
                             if let Some(parent) = parent {
+                                // check the same difficulty as parent
+                                if block.header.difficulty != parent.header.difficulty {
+                                    continue; // ignore the block
+                                }
+                                blockchain.insert(&block);
+                                new_blocks.push(block.hash());
+                                let mut new_block_hashes = vec![block.hash()];
+                                loop {
+                                    let mut b = block_buffer.remove(&new_block_hashes[0]);
+                                    // remove the first element
+                                    if let Some(b) = b {
+                                        for this_block in b {
+                                            // omit checking difficulty here
+                                            blockchain.insert(&this_block);
+                                            new_blocks.push(this_block.hash());
+                                            new_block_hashes.push(this_block.hash());
+                                        }
+                                    }
+                                    new_block_hashes = new_block_hashes[1..].to_vec();
+                                    if new_block_hashes.len() == 0 {
+                                        break;
+                                    }
+                                }
                             } else {
                                 needed_parent_blocks.push(block.header.parent.clone());
-                                block_buffer.insert(block.header.parent.clone(), block.clone());
+                                let mut b = block_buffer.entry(block.header.parent.clone()).or_insert(vec![]);
+                                b.push(block.clone());
                             }
-                            blockchain.insert(&block);
-                            new_blocks.push(block.hash());
-                            if let Some(b) = block_buffer.remove(&block.hash()) {
-                                blockchain.insert(&b);
-                                new_blocks.push(b.hash());
-                            }
+                            
                         }
                     }
                     if new_blocks.len() > 0 {

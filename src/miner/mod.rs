@@ -148,13 +148,10 @@ impl Context {
             let difficulty = self.blockchain.lock().unwrap().get_difficulty();
             let parent = self.blockchain.lock().unwrap().tip();
             let block = generate_block(&parent, &difficulty, txs);
-
             if block.hash() <= difficulty {
                 self.finished_block_chan.send(block.clone()).expect("Send finished block error");
-
                 self.blockchain.lock().unwrap().insert(&block);
                 println!("from miner: block inserted");
-                
             }
 
 
