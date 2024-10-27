@@ -23,7 +23,7 @@ impl Blockchain {
         let parent: H256 = H256::from([0; 32]);
         let nonce: u32 = 0;
         let mut easy: [u8; 32] = [0; 32];
-        easy[0] = 0x1f;
+        easy[1] = 0x04;
         let difficulty = H256::from(easy);
         let empty: Vec<H256> = Vec::new();
         let merkle_root = MerkleTree::new(&empty).root();
@@ -95,6 +95,20 @@ impl Blockchain {
         }
         blocks.reverse();
         blocks
+    }
+
+    pub fn all_transactions_in_longest_chain(&self) -> Vec<Vec<H256>> {
+        let mut transactions = Vec::new();
+        let blocks = self.all_blocks_in_longest_chain();
+        for block in blocks.iter() {
+            let block = self.blocks.get(block).unwrap();
+            let mut txs = Vec::new();
+            for tx in block.data.iter() {
+                txs.push(tx.hash());
+            }
+            transactions.push(txs);
+        }
+        transactions
     }
 }
 

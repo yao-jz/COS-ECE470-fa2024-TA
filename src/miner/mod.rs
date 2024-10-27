@@ -9,6 +9,7 @@ use std::thread;
 use crate::blockchain::{Blockchain};
 use std::sync::{Arc, Mutex};
 use crate::types::block::{Block,generate_block};
+use crate::types::mempool::Mempool;
 use crate::types::hash::H256;
 use crate::types::hash::Hashable;
 use crate::types::transaction::SignedTransaction;
@@ -31,6 +32,7 @@ pub struct Context {
     operating_state: OperatingState,
     finished_block_chan: Sender<Block>,
     blockchain: Arc<Mutex<Blockchain>>,
+    mempool: Arc<Mutex<Mempool>>,
 }
 
 #[derive(Clone)]
@@ -39,7 +41,7 @@ pub struct Handle {
     control_chan: Sender<ControlSignal>,
 }
 
-pub fn new(blockchain: &Arc<Mutex<Blockchain>>) -> (Context, Handle, Receiver<Block>) {
+pub fn new(blockchain: &Arc<Mutex<Blockchain>>, mempool: &Arc<Mutex<Mempool>>) -> (Context, Handle, Receiver<Block>) {
     let (signal_chan_sender, signal_chan_receiver) = unbounded();
     let (finished_block_sender, finished_block_receiver) = unbounded();
 
@@ -48,6 +50,7 @@ pub fn new(blockchain: &Arc<Mutex<Blockchain>>) -> (Context, Handle, Receiver<Bl
         operating_state: OperatingState::Paused,
         finished_block_chan: finished_block_sender,
         blockchain: Arc::clone(blockchain),
+        mempool: Arc::clone(mempool),
     };
 
     let handle = Handle {
@@ -60,7 +63,8 @@ pub fn new(blockchain: &Arc<Mutex<Blockchain>>) -> (Context, Handle, Receiver<Bl
 #[cfg(any(test,test_utilities))]
 fn test_new() -> (Context, Handle, Receiver<Block>) {
     let blockchain = Arc::new(Mutex::new(Blockchain::new()));
-    new(&blockchain)
+    let mempool = Arc::new(Mutex::new(Mempool::new()));
+    new(&blockchain, &mempool)
 }
 
 impl Handle {
@@ -96,6 +100,16 @@ impl Context {
             let mut count = 0;
             let mut txs: Vec<SignedTransaction> = Vec::new();
             // get transactions from mempool
+            {
+                let mut mempool = self.mempool.lock().unwrap();
+                for (_, tx) in mempool.transactions.iter() {
+                    txs.push(tx.clone());
+                    count += 1;
+                    if count == 30 {
+                        break;
+                    }
+                }
+            }
 
             // check and react to control signals
             match self.operating_state {
@@ -147,11 +161,19 @@ impl Context {
             // TODO for student: if block mining finished, you can have something like: self.finished_block_chan.send(block.clone()).expect("Send finished block error");
             let difficulty = self.blockchain.lock().unwrap().get_difficulty();
             let parent = self.blockchain.lock().unwrap().tip();
-            let block = generate_block(&parent, &difficulty, txs);
+            let block = generate_block(&parent, &difficulty, &txs);
             if block.hash() <= difficulty {
+                // println!("from miner: block generated, including {} transactions", txs.len());
                 self.finished_block_chan.send(block.clone()).expect("Send finished block error");
-                self.blockchain.lock().unwrap().insert(&block);
-                println!("from miner: block inserted");
+                // self.blockchain.lock().unwrap().insert(&block);
+                // println!("from miner: block inserted");
+                // remove transactions from mempool
+                {
+                    let mut mempool = self.mempool.lock().unwrap();
+                    for tx in txs.iter() {
+                        mempool.transactions.remove(&tx.hash());
+                    }
+                }
             }
 
 

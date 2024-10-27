@@ -4,9 +4,10 @@ use super::server::Handle as ServerHandle;
 use crate::types::hash::{Hashable, H256};
 use crate::blockchain::Blockchain;
 use std::sync::{Arc, Mutex};
+use crate::types::mempool::Mempool;
 use crate::types::block::Block;
+use crate::types::transaction::{verify, SignedTransaction};
 use std::collections::HashMap;
-
 
 use log::{debug, warn, error};
 
@@ -22,6 +23,7 @@ pub struct Worker {
     num_worker: usize,
     server: ServerHandle,
     blockchain: Arc<Mutex<Blockchain>>,
+    mempool: Arc<Mutex<Mempool>>,
 }
 
 
@@ -31,12 +33,14 @@ impl Worker {
         msg_src: smol::channel::Receiver<(Vec<u8>, peer::Handle)>,
         server: &ServerHandle,
         blockchain: &Arc<Mutex<Blockchain>>,
+        mempool: &Arc<Mutex<Mempool>>,
     ) -> Self {
         Self {
             msg_chan: msg_src,
             num_worker,
             server: server.clone(),
             blockchain: Arc::clone(blockchain),
+            mempool: Arc::clone(mempool),
         }
     }
 
@@ -111,6 +115,17 @@ impl Worker {
                                 if block.header.difficulty != parent.header.difficulty {
                                     continue; // ignore the block
                                 }
+                                // check the signature
+                                // check public key is the same as sender
+                                // check nonce is increasing
+                                // check sender has enough balance
+                                // remove the transactions in the mempool
+                                {
+                                    let mut mempool = self.mempool.lock().unwrap();
+                                    for tx in block.data.iter() {
+                                        mempool.transactions.remove(&tx.hash());
+                                    }
+                                }
                                 blockchain.insert(&block);
                                 new_blocks.push(block.hash());
                                 let mut new_block_hashes = vec![block.hash()];
@@ -120,6 +135,17 @@ impl Worker {
                                     if let Some(b) = b {
                                         for this_block in b {
                                             // omit checking difficulty here
+                                            // check the signature
+                                            // check public key is the same as sender
+                                            // check nonce is increasing
+                                            // check sender has enough balance
+                                            // remove the transactions in the mempool
+                                            {
+                                                let mut mempool = self.mempool.lock().unwrap();
+                                                for tx in block.data.iter() {
+                                                    mempool.transactions.remove(&tx.hash());
+                                                }
+                                            }
                                             blockchain.insert(&this_block);
                                             new_blocks.push(this_block.hash());
                                             new_block_hashes.push(this_block.hash());
@@ -145,7 +171,58 @@ impl Worker {
                         peer.write(Message::GetBlocks(needed_parent_blocks));
                     }
                 }
-                _ => unimplemented!(),
+                Message::NewTransactionHashes(hashes) => {
+                    debug!("NewTransactionHashes: {:?}", hashes);
+                    let mut needed_txs: Vec<H256> = vec![];
+                    for hash in hashes {
+                        let tx = self.mempool.lock().unwrap().transactions.get(&hash).cloned();
+                        if let Some(tx) = tx {
+                        } else {
+                            needed_txs.push(hash);
+                        }
+                    }
+                    if needed_txs.len() > 0 {
+                        peer.write(Message::GetTransactions(needed_txs));
+                    }
+                }
+                Message::GetTransactions(hashes) => {
+                    debug!("GetTransactions: {:?}", hashes);
+                    let mut needed_txs: Vec<SignedTransaction> = vec![];
+                    for hash in hashes {
+                        let tx = self.mempool.lock().unwrap().transactions.get(&hash).cloned();
+                        if let Some(tx) = tx {
+                            needed_txs.push(tx);
+                        }
+                    }
+                    if needed_txs.len() > 0 {
+                        peer.write(Message::Transactions(needed_txs));
+                    }
+                }
+                Message::Transactions(txs) => {
+                    debug!("Transactions: {:?}", txs);
+                    // check the signature
+                    let mut new_txs = vec![];
+                    for tx in txs {
+                        let valid = verify(&tx.transaction, &tx.public_key, &tx.signature);
+                        if valid {
+                            let mut mempool = self.mempool.lock().unwrap();
+                            let existing_tx = mempool.transactions.get(&tx.hash()).cloned();
+                            if let Some(existing_tx) = existing_tx {
+                                continue;
+                            } else {
+                                mempool.transactions.insert(tx.hash(), tx.clone());
+                                new_txs.push(tx.hash());
+                            }
+                        }
+                    }
+                    // check public key is the same as sender
+                    // check nonce is increasing
+                    // check sender has enough balance
+                    
+                    if new_txs.len() > 0 {
+                        self.server.broadcast(Message::NewTransactionHashes(new_txs));
+                    }
+                }
             }
         }
     }
@@ -176,7 +253,8 @@ fn generate_test_worker_and_start() -> (TestMsgSender, ServerTestReceiver, Vec<H
     let (test_msg_sender, msg_chan) = TestMsgSender::new();
     let blockchain = Arc::new(Mutex::new(Blockchain::new()));
     let all_blocks = blockchain.lock().unwrap().all_blocks_in_longest_chain();
-    let worker = Worker::new(1, msg_chan, &server, &blockchain);
+    let mempool = Arc::new(Mutex::new(Mempool::new()));
+    let worker = Worker::new(1, msg_chan, &server, &blockchain, &mempool);
     worker.start(); 
     (test_msg_sender, server_receiver, all_blocks)
 }

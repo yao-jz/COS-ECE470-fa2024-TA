@@ -42,7 +42,7 @@ impl Block {
     }
 }
 
-pub fn generate_block(parent: &H256, difficulty: &H256, signed_txs: Vec<SignedTransaction>) -> Block {
+pub fn generate_block(parent: &H256, difficulty: &H256, signed_txs: &Vec<SignedTransaction>) -> Block {
     let timestamp = std::time::SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis();
     let signed_txs_copy = signed_txs.clone();
     let root = MerkleTree::new(&signed_txs_copy).root();
