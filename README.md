@@ -2,6 +2,8 @@
 
 Welcome! This is the repository for COS/ECE 470: Principles of Blockchains, Fall 2024 at Princeton University. 
 
+This is TA's implementation of the bitcoin project.
+
 [Main website of the course](https://web3.princeton.edu/principles-of-blockchains/).
 
 ## Discussion
