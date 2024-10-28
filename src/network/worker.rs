@@ -119,6 +119,20 @@ impl Worker {
                                 // check public key is the same as sender
                                 // check nonce is increasing
                                 // check sender has enough balance
+                                let mut state = blockchain.states.get(&parent.hash()).unwrap().clone();
+                                let mut valid: bool = true;
+                                for tx in block.data.iter() {
+                                    valid = valid && state.is_transaction_valid(tx);
+                                }    
+                                if !valid {
+                                    continue;
+                                }
+                                // process the state
+                                for tx in block.data.iter() {
+                                    state.process(tx);
+                                }
+                                // update the state
+                                blockchain.states.insert(block.hash(), state);
                                 // remove the transactions in the mempool
                                 {
                                     let mut mempool = self.mempool.lock().unwrap();
@@ -139,6 +153,20 @@ impl Worker {
                                             // check public key is the same as sender
                                             // check nonce is increasing
                                             // check sender has enough balance
+                                            let mut state = blockchain.states.get(&this_block.header.parent).unwrap().clone();
+                                            let mut valid: bool = true;
+                                            for tx in this_block.data.iter() {
+                                                valid = valid && state.is_transaction_valid(tx);
+                                            }
+                                            if !valid {
+                                                continue;
+                                            }
+                                            // process the state
+                                            for tx in block.data.iter() {
+                                                state.process(tx);
+                                            }
+                                            // update the state
+                                            blockchain.states.insert(block.hash(), state);
                                             // remove the transactions in the mempool
                                             {
                                                 let mut mempool = self.mempool.lock().unwrap();

@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use indexmap::IndexMap;
 
 use super::{
     hash::{Hashable, H256},
@@ -8,13 +9,13 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Default, Clone)]
 pub struct Mempool {
-    pub transactions: HashMap<H256, SignedTransaction>,
+    pub transactions: IndexMap<H256, SignedTransaction>,
 }
 
 impl Mempool {
     pub fn new() -> Self {
         Self{
-            transactions: HashMap::new(),
+            transactions: IndexMap::new(),
         }
     }
 }

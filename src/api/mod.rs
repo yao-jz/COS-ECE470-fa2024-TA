@@ -8,6 +8,7 @@ use crate::TransactionGenerator;
 
 use log::info;
 use std::collections::HashMap;
+use std::hash::Hash;
 use std::sync::{Arc, Mutex};
 use std::thread;
 use tiny_http::Header;
@@ -130,6 +131,39 @@ impl Server {
                             };
                             tx_generator.start(theta);
                             respond_result!(req, true, "ok");
+                        }
+                        "/blockchain/state" => {
+                            let params = url.query_pairs();
+                            let params: HashMap<_, _> = params.into_owned().collect();
+                            let block_index = match params.get("block") {
+                                Some(v) => v,
+                                None => {
+                                    respond_result!(req, false, "missing block");
+                                    return;
+                                }
+                            };
+                            let block_index = match block_index.parse::<u64>() {
+                                Ok(v) => v,
+                                Err(e) => {
+                                    respond_result!(
+                                        req,
+                                        false,
+                                        format!("error parsing block index: {}", e)
+                                    );
+                                    return;
+                                }
+                            };
+                            let blockchain = blockchain.lock().unwrap();
+                            let v = blockchain.all_blocks_in_longest_chain();
+                            let this_block = v.get(block_index as usize);
+                            let state = blockchain.states[this_block.unwrap()].clone();
+                            let mut v_string: Vec<String> = vec![];
+                            for (k, v) in state.data.iter() {
+                                v_string.push(format!("({}, {}, {})", k, v.nonce, v.balance));
+                            }
+                            // order the output
+                            v_string.sort();
+                            respond_json!(req, v_string);
                         }
                         "/network/ping" => {
                             network.broadcast(Message::Ping(String::from("Test ping")));

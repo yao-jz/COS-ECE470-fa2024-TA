@@ -98,14 +98,20 @@ impl Context {
         // main mining loop
         loop {
             let mut count = 0;
+            let parent = self.blockchain.lock().unwrap().tip();
+            let mut state = self.blockchain.lock().unwrap().states.get(&parent).unwrap().clone();
             let mut txs: Vec<SignedTransaction> = Vec::new();
             // get transactions from mempool
             {
                 let mut mempool = self.mempool.lock().unwrap();
                 for (_, tx) in mempool.transactions.iter() {
+                    if !state.is_transaction_valid(&tx) {
+                        continue;
+                    }
                     txs.push(tx.clone());
+                    state.process(&tx);
                     count += 1;
-                    if count == 30 {
+                    if count == 50 {
                         break;
                     }
                 }
@@ -160,13 +166,31 @@ impl Context {
             // TODO for student: actual mining, create a block
             // TODO for student: if block mining finished, you can have something like: self.finished_block_chan.send(block.clone()).expect("Send finished block error");
             let difficulty = self.blockchain.lock().unwrap().get_difficulty();
-            let parent = self.blockchain.lock().unwrap().tip();
+            
             let block = generate_block(&parent, &difficulty, &txs);
             if block.hash() <= difficulty {
+                println!("from miner: block generated, including {} transactions", txs.len());
+                let mut state = self.blockchain.lock().unwrap().states.get(&parent).unwrap().clone();
+                let mut valid: bool = true;
+                for tx in txs.iter() {
+                    valid = valid && state.is_transaction_valid(&tx);
+                }
+                if !valid {
+                    println!("from miner: invalid transaction");
+                    continue;
+                }
+
                 // println!("from miner: block generated, including {} transactions", txs.len());
                 self.finished_block_chan.send(block.clone()).expect("Send finished block error");
                 // self.blockchain.lock().unwrap().insert(&block);
                 // println!("from miner: block inserted");
+                // process the state
+                for tx in block.data.iter() {
+                    state.process(tx);
+                }
+                // update the state
+                self.blockchain.lock().unwrap().states.insert(block.hash(), state);
+
                 // remove transactions from mempool
                 {
                     let mut mempool = self.mempool.lock().unwrap();

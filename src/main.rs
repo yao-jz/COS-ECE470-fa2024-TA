@@ -94,7 +94,7 @@ fn main() {
     miner_worker_ctx.start();
 
     // start the transaction generator
-    let transaction_generator = TransactionGenerator::new(&server, &mempool);
+    let transaction_generator = TransactionGenerator::new(&server, &mempool, &blockchain);
 
     // connect to known peers
     if let Some(known_peers) = matches.values_of("known_peer") {
